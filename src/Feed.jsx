@@ -9,12 +9,16 @@ import FeedOption from './FeedOption';
 import Post from './Post';
 import { db } from './firebase';
 import firebase from 'firebase/compat/app';
+import { useSelector } from 'react-redux';
+import { selectUser } from './features/userSlice';
+import FlipMove from 'react-flip-move';
 // import { db } from 'firebase';
 // import { db } from './firebase';
 
 // import { input } from '@testing-library/user-event/dist/types/event';
 
 function Feed() {
+    const user = useSelector(selectUser)
 
     const [posts, setPosts] = useState([]);
     const [input, setInput] = useState('');
@@ -38,10 +42,10 @@ function Feed() {
     const sendPost = (e) => {
         e.preventDefault();
         db.collection('posts').add({
-            name: 'Ibrahim Zulfiqar',
-            discription: 'hello',
+            name: user.displayName,
+            discription: user.email,
             message: input,
-            photoUrl: '',
+            photoUrl: user.photoUrl || '',
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
 
 
@@ -73,14 +77,18 @@ function Feed() {
                 <FeedOption Icon = {CalendarViewDayIcon} title="Write Artivcle" color='#7fc15e'/>
             </div>
         </div>
+
+        <FlipMove>
+
         {posts.map(({id,data:{name,discription,message,photoUrl}}) => (
             <Post
             key={id}
             name={name}
             discription={discription}
             message={message}
-            photoUrl='' />
+            photoUrl={photoUrl} />
         ))}
+        </FlipMove>
     
         {/* <Post name='ibrahim' discription='this is a first test' message='hello there' /> */}
     </div>
